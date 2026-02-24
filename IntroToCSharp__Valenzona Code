@@ -1,0 +1,109 @@
+using System;
+
+/*
+ * Name: John Ivan Valenzona
+ * Project: Codac Logistics Delivery & Fuel Auditor
+ * Description: A console-based tool to track fuel expenses and delivery performance.
+ * Data Types Chosen:
+ * - string: For text like the driver's name.
+ * - int: For whole numbers like the 5-day work week.
+ * - double: For distances which often have decimal points.
+ * - decimal: For financial values (money) to ensure high precision.
+ * - bool: For true/false flags like budget status.
+ */
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // --- Task 1: Driver Profile & Distance Validation ---
+        Console.WriteLine("=== Codac Logistics: Fuel & Delivery Auditor ===");
+
+        Console.Write("Enter Driver's Full Name: ");
+        string driverName = Console.ReadLine();
+
+        Console.Write("Enter Weekly Fuel Budget (PHP): ");
+        // Note: Make sure to enter numbers only to avoid crashes
+        decimal fuelBudget = decimal.Parse(Console.ReadLine());
+
+        double totalDistance = 0;
+        bool isDistanceValid = false;
+
+        // While loop ensures the user cannot proceed unless distance is between 1.0 and 5000.0
+        while (!isDistanceValid)
+        {
+            Console.Write("Enter Total Distance Traveled (1.0 - 5000.0 km): ");
+            string distanceInput = Console.ReadLine();
+            
+            if (double.TryParse(distanceInput, out totalDistance) && totalDistance >= 1.0 && totalDistance <= 5000.0)
+            {
+                isDistanceValid = true;
+            }
+            else
+            {
+                Console.WriteLine("[ERROR] Invalid distance! Range must be 1.0 to 5000.0 km.");
+            }
+        }
+
+        // --- Task 2: Fuel Expense Tracking ---
+        int workingDays = 5; 
+        decimal[] fuelExpenses = new decimal[workingDays]; 
+        decimal totalFuelSpent = 0;
+
+        // For loop used to process each day's entry efficiently
+        for (int i = 0; i < workingDays; i++)
+        {
+            Console.Write($"Enter fuel cost for Day {i + 1}: ");
+            fuelExpenses[i] = decimal.Parse(Console.ReadLine());
+            totalFuelSpent += fuelExpenses[i];
+        }
+
+        // --- Task 3: Performance Analysis ---
+        decimal averageDailyExpense = totalFuelSpent / (decimal)workingDays;
+
+        // Efficiency calculation (Distance / Fuel)
+        // Explicitly casting totalFuelSpent to double to match totalDistance
+        double efficiencyValue = totalDistance / (double)totalFuelSpent;
+        string efficiencyRating;
+
+        if (efficiencyValue > 15)
+        {
+            efficiencyRating = "High Efficiency";
+        }
+        else if (efficiencyValue >= 10)
+        {
+            efficiencyRating = "Standard Efficiency";
+        }
+        else
+        {
+            efficiencyRating = "Low Efficiency / Maintenance Required";
+        }
+
+        bool isUnderBudget = totalFuelSpent <= fuelBudget;
+
+        // --- Task 4: The Audit Report ---
+        Console.WriteLine("\n" + new string('=', 45));
+        Console.WriteLine("          OFFICIAL FUEL AUDIT REPORT         ");
+        Console.WriteLine(new string('=', 45));
+        Console.WriteLine($"Driver Name     : {driverName}");
+        Console.WriteLine($"Weekly Budget   : PHP {fuelBudget:N2}");
+        Console.WriteLine($"Total Distance  : {totalDistance:N1} km");
+
+        Console.WriteLine("\nDaily Expense Breakdown:");
+        for (int i = 0; i < workingDays; i++)
+        {
+            // Fixed the spaces and alignment for a cleaner table look
+            Console.WriteLine($"  Day {i + 1}         : PHP {fuelExpenses[i]:N2}");
+        }
+
+        Console.WriteLine("\nFinancial Summary:");
+        Console.WriteLine($"Total Fuel Spent: PHP {totalFuelSpent:N2}");
+        Console.WriteLine($"Average Daily   : PHP {averageDailyExpense:N2}");
+        Console.WriteLine($"Efficiency      : {efficiencyRating} ({efficiencyValue:F2} km/L)");
+        Console.WriteLine($"Within Budget   : {isUnderBudget}");
+        Console.WriteLine(new string('=', 45));
+
+        Console.WriteLine("\nPress any key to close this report...");
+        Console.ReadKey();
+    }
+}
